@@ -6,11 +6,13 @@ and it will attempt to generate similar random names. Undesired sequences of
 characters can also be blacklisted.
 
 
+
 ######Constructing a Name Generator######
 NameGen's constructor takes two integers, representing the minumum (inclusive)
 and maximum (exclusive) desired lengths. NameGen makes no attempt to error-
 check these values. NameGen also provides a second constructor that takes a seed
 as the third argument.
+
 
 
 ######Training the Name Generator######
@@ -19,8 +21,10 @@ similar names. NameGen will remove whitespace from the string, but will not
 handle any other non-alphabetic characters.
 
 
+
 ######Generating Names######
 NameGen.getName will generate and return a name.
+
 
 
 ######Blacklisting a Sequence######
@@ -28,6 +32,7 @@ NameGen.removeName takes one string and will prevent that sequence from being
 generated. Note that, because of the Markov Property, the entire sequence is
 removed, so if you remove the sequence "jfthg", the "th" combination will never
 be generated. Remove "jft" and "hg" instead.
+
 
 
 **GenMain** is provided as an example of NameGen's usage. GenMain is a complete
