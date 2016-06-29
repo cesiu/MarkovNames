@@ -16,19 +16,19 @@ as the third argument.
 
 
 ######Training the Name Generator######
-NameGen.addName takes one string and will, after that, attempt to generate
+`NameGen.addName` takes one string and will, after that, attempt to generate
 similar names. NameGen will remove whitespace from the string, but will not
 handle any other non-alphabetic characters.
 
 
 
 ######Generating Names######
-NameGen.getName will generate and return a name.
+`NameGen.getName` will generate and return a name.
 
 
 
 ######Blacklisting a Sequence######
-NameGen.removeName takes one string and will prevent that sequence from being
+`NameGen.removeName` takes one string and will prevent that sequence from being
 generated. Note that, because of the Markov Property, the entire sequence is
 removed, so if you remove the sequence "jfthg", the "th" combination will never
 be generated. Remove "jft" and "hg" instead.
