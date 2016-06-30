@@ -19,22 +19,30 @@ class NameGen:
         random.seed(gen_seed)
 
         # map characters to states. Individual states are tuples of totals and maps of characters to quantities. 
-        # so it's a map of characters to tuples of totals and maps of characters to quantities.
-        # {c: (t, {l: n})}
+        # so it's a map of characters to lists of totals and maps of characters to quantities.
+        # {c: [t, {l: n}]}
         vowel_map = dict(dict((char, 0) for char in self.VOWELS), **dict((char, 1) for char in self.CONSONANTS))
         cons_map = dict(dict((char, 0) for char in self.CONSONANTS), **dict((char, 1) for char in self.VOWELS))
 
-        self.states = dict(dict((vowel, (len(self.CONSONANTS), deepcopy(vowel_map))) for vowel in self.VOWELS), **dict((cons, (len(self.VOWELS), deepcopy(cons_map))) for cons in self.CONSONANTS))
+        self.states = dict(dict((vowel, [len(self.CONSONANTS), deepcopy(vowel_map)]) for vowel in self.VOWELS), **dict((cons, [len(self.VOWELS), deepcopy(cons_map)]) for cons in self.CONSONANTS))
 
-        self.states['y'] = (25, dict((char, 1) if char != 'y' else (char, 0) for char in string.ascii_lowercase))
+        self.states['y'] = [25, dict((char, 1) if char != 'y' else (char, 0) for char in string.ascii_lowercase)]
 
-        self.begin_state = (26, dict((char, 1) for char in string.ascii_lowercase)) 
+        self.begin_state = [26, dict((char, 1) for char in string.ascii_lowercase)]
 
     def add_name(self, name):
-        pass
+        self.begin_state[1][name[1]] += 1
+        self.begin_state[0] += 1
+        for (idx, char) in enumerate(name[:-1]):
+            self.states[char][1][name[idx + 1]] += 1
+            self.states[char][0] += 1
 
     def remove_name(self, name):
-        pass
+        self.begin_state[0] -= self.begin_state[1][name[1]]
+        self.begin_state[1][name[1]] = 0
+        for (idx, char) in enumerate(name[:-1]):
+            self.states[char][0] -= self.states[char][1][name[idx + 1]]
+            self.states[char][1][name[idx + 1]] = 0
 
     def gen_name(self):
         ret_str = self.next_char(self.begin_state, "[begin]")
@@ -54,7 +62,12 @@ class NameGen:
         raise Exception("Error: %s: invalid choice(%d) for total of %d." % (cur_char, choice, cur_state[0]))
 
     def __str__(self):
-        return ''.join(char + ':\n   ' + str(self.states[char]) + '\n\n' for char in self.states.keys())
+        return ''.join("%s:\n   %s\n\n" % (char, str(self.states[char])) for char in self.states.keys())
 
 g = NameGen(4,9)
+print g
+g.add_name("test");
+print g
+g.remove_name("lol");
+print g
 print g.gen_name()
