@@ -28,8 +28,33 @@ class NameGen:
 
         self.states['y'] = (25, dict((char, 1) if char != 'y' else (char, 0) for char in string.ascii_lowercase))
 
+        self.begin_state = (26, dict((char, 1) for char in string.ascii_lowercase)) 
+
+    def add_name(self, name):
+        pass
+
+    def remove_name(self, name):
+        pass
+
+    def gen_name(self):
+        ret_str = self.next_char(self.begin_state, "[begin]")
+        for i in range(random.randint(self.min_len, self.max_len - 1) - 1):
+            ret_str += self.next_char(self.states[ret_str[-1]], ret_str[-1])
+        return ret_str
+
+    def next_char(self, cur_state, cur_char):
+        choice = random.randint(0, cur_state[0] - 1)
+        chance = 0
+
+        for (pos_char, pos_qty) in cur_state[1].iteritems():
+            chance += pos_qty
+            if choice < chance:
+                return pos_char
+
+        raise Exception("Error: %s: invalid choice(%d) for total of %d." % (cur_char, choice, cur_state[0]))
+
     def __str__(self):
         return ''.join(char + ':\n   ' + str(self.states[char]) + '\n\n' for char in self.states.keys())
 
-g = NameGen(1,1)
-print g
+g = NameGen(4,9)
+print g.gen_name()
