@@ -7,6 +7,7 @@
 import random
 import string
 from copy import deepcopy
+from sys import argv
 
 class NameGen:
     # all the vowels
@@ -50,14 +51,17 @@ class NameGen:
     # Trains the generator using a name.
     # name - the name to use
     def add_name(self, name):
-        # Add the first letter to the beginning state.
-        self.begin_state[1][name[1]] += 1
-        self.begin_state[0] += 1
-        # For every character except the last in the name:
-        for (idx, char) in enumerate(name[:-1]):
-            # Add the character after it to its state.
-            self.states[char][1][name[idx + 1]] += 1
-            self.states[char][0] += 1
+        # Sanitize the string.
+        name = string.lower(name.strip())
+        if name:
+            # Add the first letter to the beginning state.
+            self.begin_state[1][name[1]] += 1
+            self.begin_state[0] += 1
+            # For every character except the last in the name:
+            for (idx, char) in enumerate(name[:-1]):
+                # Add the character after it to its state.
+                self.states[char][1][name[idx + 1]] += 1
+                self.states[char][0] += 1
 
     # Removes a sequence from the Markov chain.
     # name - the sequence to remove
@@ -107,10 +111,22 @@ class NameGen:
         return ''.join("%s:\n   %s\n\n" % (char, str(self.states[char])) \
                        for char in self.states.keys())
 
-g = NameGen(4,9)
-print g
-g.add_name("test");
-print g
-g.remove_name("lol");
-print g
-print g.gen_name()
+def main():
+    if len(argv) < 3:
+        print "Usage: python NameGen.py [min] [max]"
+
+    gen = NameGen(int(argv[1]), int(argv[2]))
+
+    choice = raw_input("Enter a command: ")
+    while choice != "quit":
+        if choice == "gen":
+            print gen.gen_name()
+        elif choice == "file":
+            filename = raw_input("Enter filename: ")
+            with open(filename, 'r') as name_file:
+                for name in name_file:
+                    gen.add_name(name)
+        choice = raw_input("Enter a command: ")
+
+if __name__ == "__main__":
+    main()
